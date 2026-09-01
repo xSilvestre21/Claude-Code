@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# projeto-1
+
+Aplicação web construída com **Next.js 16** (App Router), **React 19**, **TypeScript** e **TailwindCSS 4**.
+
+## Stack
+
+| Camada        | Tecnologia                                             |
+| ------------- | ----------------------------------------------------- |
+| Framework     | Next.js `16.3.3` (App Router, Server Components first) |
+| UI            | React `19.2.8`, TailwindCSS `4` (`@tailwindcss/postcss`) |
+| Linguagem     | TypeScript `5` (`strict`), alias de import `@/*`       |
+| Lint          | ESLint `9` + `eslint-config-next` (flat config)        |
+| Fontes        | Geist / Geist Mono via `next/font/google`              |
+
+Planejado para as próximas fases (ver `CLAUDE.md`): shadcn/ui, React Hook Form + Zod, Supabase, Stripe.
+
+## Pré-requisitos
+
+- Node.js `>=18.18` (recomendado `22.x`)
+- npm `>=10`
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000). A edição de `app/page.tsx` recarrega a página automaticamente.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Comando         | Descrição                          |
+| --------------- | ---------------------------------- |
+| `npm run dev`   | Servidor de desenvolvimento (3000) |
+| `npm run build` | Build de produção                  |
+| `npm run start` | Servir o build de produção         |
+| `npm run lint`  | ESLint em todo o projeto           |
 
-## Learn More
+> O `CLAUDE.md` referencia `npm run type-check` e `npm run test` — ainda não configurados. Enquanto isso, use `npx tsc --noEmit` para checagem de tipos.
 
-To learn more about Next.js, take a look at the following resources:
+## Estrutura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Estado atual (scaffold inicial):
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+projeto-1/
+├── app/                  # App Router — rotas, layout, estilos globais
+│   ├── layout.tsx        # RootLayout + fontes Geist
+│   ├── page.tsx          # rota /
+│   └── globals.css       # Tailwind + design tokens (@theme)
+├── public/               # assets estáticos
+├── next.config.ts
+├── tsconfig.json
+├── eslint.config.mjs
+├── postcss.config.mjs
+├── CLAUDE.md             # instruções de arquitetura para agentes
+└── AGENTS.md             # regras do Next.js 16 (geradas pelo `next dev`)
+```
 
-## Deploy on Vercel
+### Convenções (conforme `CLAUDE.md`)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Server Components por padrão** — adicionar `'use client'` só ao usar hooks, eventos ou APIs de browser.
+- Rotas em `app/`, agrupadas por `(grupo)/`.
+- Mutações via **Server Actions** em `actions/` — nunca acessar o DB direto em Client Components.
+- `components/ui/` para primitivos (shadcn); `components/` para componentes de feature.
+- `lib/` para helpers e clients; `types/` para tipos globais e schemas Zod compartilhados.
+- Arquivos em `kebab-case`, componentes em `PascalCase`.
+- Proibido `any` explícito — usar `unknown` + type guard. Somente Tailwind, sem CSS inline.
+- Novos design tokens vão em `app/globals.css` (bloco `@theme`) antes de serem usados.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Variáveis de Ambiente
+
+- Copiar `.env.example` para `.env.local` ao clonar (arquivo `.env.example` ainda não criado).
+- `NEXT_PUBLIC_*` apenas para valores seguros no client.
+- Segredos (DB, API keys) apenas em Server Actions ou Route Handlers.
+
+## Deploy
+
+Deploy recomendado na [Vercel](https://vercel.com/new). Ver a [documentação de deploy do Next.js](https://nextjs.org/docs/app/building-your-application/deploying).
